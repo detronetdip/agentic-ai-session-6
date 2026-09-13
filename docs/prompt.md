@@ -190,15 +190,3 @@ ensure_secret monk-postgres-dsn  "${POSTGRES_DSN:-${DATABASE_URL:-}}"
 
 ---
 
-## Bonus
-
-> Between research and writing, add a reviewer that decides “enough” or “need more”. If “need more”, send research back once with notes on what to fill. At most one extra loop.
-
----
-
-> Add a helper that downloads a PDF, pulls out the text (cap at 20,000 characters), and tells the model to prefer it for academic papers and company filings.
-
----
-
-> Keep “search our documents” looking the same from the outside, but inside call Amazon’s knowledge library instead. The rest of the flow must not need changes.
-
