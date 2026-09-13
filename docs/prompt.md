@@ -11,11 +11,11 @@ Today: turn the safety filter on, collect sample questions, check LangSmith, gra
 Prerequisite — create the standard `monk-research-guardrail` first (AWS console, or this CLI command; region `us-east-1`, needs `bedrock:CreateGuardrail`):
 
 ```bash
-cat > /tmp/topic-policy.json <<'EOF'
+cat > ./topic-policy.json <<'EOF'
 {"topicsConfig":[{"name":"Cooking and Recipes","definition":"Any request for cooking recipes, ingredients, or step-by-step food preparation instructions.","examples":["give me a recipe for","how do I cook","ingredients for"],"type":"DENY"}]}
 EOF
 
-cat > /tmp/content-policy.json <<'EOF'
+cat > ./content-policy.json <<'EOF'
 {"filtersConfig":[
   {"type":"HATE","inputStrength":"HIGH","outputStrength":"HIGH"},
   {"type":"INSULTS","inputStrength":"HIGH","outputStrength":"HIGH"},
@@ -26,7 +26,7 @@ cat > /tmp/content-policy.json <<'EOF'
 ]}
 EOF
 
-cat > /tmp/pii-policy.json <<'EOF'
+cat > ./pii-policy.json <<'EOF'
 {"piiEntitiesConfig":[{"type":"PHONE","action":"ANONYMIZE"},{"type":"EMAIL","action":"ANONYMIZE"}]}
 EOF
 
@@ -36,16 +36,16 @@ aws bedrock create-guardrail \
   --description "Monk bootcamp standard guardrail for Project 1" \
   --blocked-input-messaging "Sorry — the Monk Research Assistant only handles business and technology research, not cooking questions." \
   --blocked-outputs-messaging "Sorry — the Monk Research Assistant only handles business and technology research, not cooking questions." \
-  --topic-policy-config file:///tmp/topic-policy.json \
-  --content-policy-config file:///tmp/content-policy.json \
-  --sensitive-information-policy-config file:///tmp/pii-policy.json
+  --topic-policy-config ./topic-policy.json \
+  --content-policy-config ./content-policy.json \
+  --sensitive-information-policy-config ./pii-policy.json
 ```
 
 Copy the printed `guardrailId`, then: `export BEDROCK_GUARDRAIL_ID=<id>` and `export BEDROCK_GUARDRAIL_VERSION=DRAFT`.
 
 > Make a short before/after safety demo.
 >
-> The test question is exactly: `Give me a step-by-step recipe to make chicken biryani.`
+> The test question is exactly: `Give me a step-by-step recipe to make a cake.`
 >
 > If we are not on a real Amazon Bedrock model, say so and stop.
 >
@@ -66,6 +66,8 @@ uv run python -m app.playground.guardrail_demo            # Case 2: guardrail on
 
 ---
 
+
+
 ## Step 2 — Safety filter for the whole app
 
 > Turn the same Amazon safety filter on for the whole assistant through the shared model helper.
@@ -78,11 +80,15 @@ uv run python -m app.playground.guardrail_demo            # Case 2: guardrail on
 
 ---
 
+
+
 ## Step 3 — Citation checker
 
 > After the writer, add a checker. It compares every web address in the report to the findings. If it finds an address that did not come from the findings, put a warning at the top of the report and leave the rest alone. If everything checks out, pass the report through. The line becomes: writer → checker → done.
 
 ---
+
+
 
 ## Step 4 — Sample questions
 
@@ -91,6 +97,8 @@ uv run python -m app.playground.guardrail_demo            # Case 2: guardrail on
 > For each question also record: words we expect as section titles, and the fewest unique citations we will accept. Use JSONL
 
 ---
+
+
 
 ## Step 5 — Test LangSmith
 
@@ -106,6 +114,8 @@ ex: uv run python -m app.playground.langsmith_demo
 
 ---
 
+
+
 ## Step 6 — Grade the planner
 
 > Grade the planner alone on each sample question. Ask a judge: how well do the smaller questions cover the expected areas? It must answer with a number from 0.0 to 1.0 and nothing else.
@@ -116,6 +126,8 @@ ex: uv run python -m app.playground.langsmith_demo
 > Print pass/fail per question and an overall score. Upload the experiment so we can inspect it.
 
 ---
+
+
 
 ## Step 7 — Grade the citations
 
@@ -129,6 +141,8 @@ ex: uv run python -m app.playground.langsmith_demo
 
 ---
 
+
+
 ## Step 8 — Grade the full report
 
 > Grade the full report for each sample question. Ask a judge on a 1–5 scale how well the report answers the question, with a short comment. Treat below 3 as a fail. Add up results and upload the experiment.
@@ -137,6 +151,8 @@ ex: uv run python -m app.playground.langsmith_demo
 > "On a scale of 1-5, how well does this report answer the question? Score: ... Return JSON with `score` and `feedback`."
 
 ---
+
+
 
 ## Step 9 — Publish to AWS
 
